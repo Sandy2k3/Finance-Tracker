@@ -1,3 +1,4 @@
+#let us update the files
 
 """Django's command-line utility for administrative tasks."""
 import os
