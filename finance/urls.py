@@ -1,4 +1,4 @@
-from . import hel
+from . import hello
 from django.urls import path,include
 
 urlpatterns = [
