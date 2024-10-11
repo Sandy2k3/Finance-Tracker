@@ -1,0 +1,11 @@
+<html>
+    <head><title>Register</title></head>
+    <body><h1>Signup</h1>
+    <form method="Post">
+        {% csrf_token %}
+        {{form.as_p}}
+        <button type="submit">Register</button>
+        <a href="{% url 'login' %}"> Already Have an Account ?</a>
+    </form>
+</body>
+</html>
