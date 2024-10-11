@@ -1,6 +1,7 @@
-from . import hello
+from . views import *
 from django.urls import path,include
 
 urlpatterns = [
-    path('hello/',hello,name='hello'),
+    path('registerPage/',registerPage,name='registerPage'),
+    path('loginPage/',loginPage,name='loginPage')
 ]
