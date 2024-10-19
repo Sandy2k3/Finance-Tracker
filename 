@@ -1,0 +1,75 @@
+[33mcommit c4da351dcd2564331902e355faaee3eef2c26a33[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/master[m[33m)[m
+Merge: 1b2f1de 526b594
+Author: Sandy2k3 <124496858+Sandy2k3@users.noreply.github.com>
+Date:   Wed Oct 2 13:10:33 2024 +0530
+
+    Merge pull request #2 from san2k3/master
+    
+    Update manage.py
+
+[33mcommit 526b594d6db0ca2603fcf42e7c1c3fe9aaf5ef9a[m
+Author: san2k3 <sgalt2k3@gmail.com>
+Date:   Wed Oct 2 13:08:16 2024 +0530
+
+    Update manage.py
+
+[33mcommit 1b2f1de6c64d770ef7d923c83cfc0286686303e0[m[33m ([m[1;31morigin/main[m[33m, [m[1;32mmaster[m[33m)[m
+Merge: 062cde6 91f4907
+Author: Sandy2k3 <sandeshgc2003@gmail.com>
+Date:   Wed Oct 2 12:58:14 2024 +0530
+
+    Merge branch 'master' of https://github.com/Sandy2k3/Finance-Tracker
+    change
+
+[33mcommit 062cde62920df26fd9d86bc4cd217e3ccfc6ebfe[m
+Merge: 68638f8 27aa4ae
+Author: Sandy2k3 <sandeshgc2003@gmail.com>
+Date:   Wed Oct 2 12:56:45 2024 +0530
+
+    update
+
+[33mcommit 91f4907b388ca6f7807a6b172341dd43708ae1ef[m
+Merge: 68638f8 27aa4ae
+Author: Sandy2k3 <124496858+Sandy2k3@users.noreply.github.com>
+Date:   Wed Oct 2 12:49:12 2024 +0530
+
+    Merge pull request #1 from Sandy2k3/main
+    
+    delete
+
+[33mcommit 27aa4aecf1f4f08b71aeba70957548b4fbe89961[m
+Author: Sandy2k3 <sandeshgc2003@gmail.com>
+Date:   Wed Oct 2 12:18:18 2024 +0530
+
+    delete
+
+[33mcommit 68638f8ac1cc1d2a2e32545c9f378e01541fb49d[m
+Author: Sandy2k3 <sandeshgc2003@gmail.com>
+Date:   Wed Oct 2 12:17:11 2024 +0530
+
+    delete gitignore
+
+[33mcommit aef3ff6bd50d90010936b3dce061fdde9185a5f5[m
+Merge: 6ca7ead 08db559
+Author: Sandy2k3 <sandeshgc2003@gmail.com>
+Date:   Wed Oct 2 12:00:15 2024 +0530
+
+    added git ignore to local
+
+[33mcommit 6ca7eadf3640680a9500caaa616db2c633116c59[m
+Author: Sandy2k3 <sandeshgc2003@gmail.com>
+Date:   Wed Oct 2 11:52:42 2024 +0530
+
+    pushing to main
+
+[33mcommit 08db559a897d9e9c1977d63df0c699d0e1d6ef20[m
+Author: Sandy2k3 <124496858+Sandy2k3@users.noreply.github.com>
+Date:   Tue Oct 1 23:47:56 2024 +0530
+
+    Initial commit
+
+[33mcommit 43bd3895983b5a4cc03277cac84b4b2b5bce5bf2[m
+Author: Sandy2k3 <sandeshgc2003@gmail.com>
+Date:   Tue Oct 1 23:04:42 2024 +0530
+
+    created django boilerplate for the project
