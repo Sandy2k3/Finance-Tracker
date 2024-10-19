@@ -5,7 +5,7 @@
         {% csrf_token %}
         {{form.as_p}}
         <button type="submit">Register</button>
-        <a href="{% url 'loginPage' %}"> Already Have an Account ?</a>
+        <a href="{% url 'login' %}"> Already Have an Account ?</a>
     </form>
 </body>
 </html>
