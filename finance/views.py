@@ -1,19 +1,20 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login
-from django.contrib.auth.models import User  # Correct import for the User model
-from .forms import *
-def index(request):
-    return render(request, 'index.html')
+from django.contrib.auth import authenticate, login ,logout 
+from django.contrib.auth.models import User 
+from django.contrib.auth.decorators import login_required 
+from django.conf import settings
+from .forms import registerform, loginform
 
 def registerPage(request):
     if request.method == 'POST':
-        form=registerform(request.POST)
+        form = registerform(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('login')
+            return redirect('login')  # Redirect to login page after registration
     else:
-        form=registerform()
-    return render(request,'finance/register.html',{'form':form})
+        form = registerform()  # Empty form for GET requests
+    return render(request, 'finance/register.html', {'form': form})
+
 def loginPage(request):
     if request.method == 'POST':
         form = loginform(request.POST)
@@ -30,7 +31,7 @@ def loginPage(request):
 
                 if user is not None:
                     login(request, user)  # Log the user in
-                    return redirect('home')  # Redirect after login
+                    return redirect(settings.LOGIN_REDIRECT_URL)  # Redirect to home
                 else:
                     form.add_error(None, "Invalid email or password.")
             except User.DoesNotExist:
@@ -39,3 +40,11 @@ def loginPage(request):
         form = loginform()  # Display an empty form for GET requests
 
     return render(request, 'finance/login.html', {'form': form})
+
+@login_required(login_url='home')
+def home(request):
+    return render(request, 'finance/home.html')
+
+def logoutPage(request):
+    logout(request)  # Log the user out
+    return redirect('login')
