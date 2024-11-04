@@ -1,7 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
-# Custom User Manager
 class CustomUserManager(BaseUserManager):
     def create_user(self, username, email, password=None):
         if not email:
@@ -23,13 +22,15 @@ class CustomUserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-# Custom User Model
 class CustomUser(AbstractBaseUser):
     user_id = models.AutoField(primary_key=True)
     username = models.CharField(max_length=150, unique=True)
     email = models.EmailField(unique=True)
     password = models.CharField(max_length=128)
-    user_category = models.CharField(max_length=150, blank=True, null=True)  # optional field
+    user_category = models.CharField(max_length=10, choices=[
+        ('business', 'Business'),
+        ('personal', 'Personal'),
+    ], default='personal')
 
     objects = CustomUserManager()
 
@@ -49,7 +50,6 @@ class UserCategory(models.Model):
     def __str__(self):
         return f"{self.user.username} - {self.user_category}"
 
-
 # Categories Model
 class Category(models.Model):
     cat_id = models.AutoField(primary_key=True)
@@ -59,7 +59,6 @@ class Category(models.Model):
     def __str__(self):
         return self.cat_name
 
-
 # Sub Category Model
 class SubCategory(models.Model):
     id = models.AutoField(primary_key=True)
@@ -68,7 +67,6 @@ class SubCategory(models.Model):
 
     def __str__(self):
         return self.subcat_name
-
 
 # Transaction Model
 class Transaction(models.Model):

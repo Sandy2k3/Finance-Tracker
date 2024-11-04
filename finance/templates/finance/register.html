@@ -1,11 +1,45 @@
 <html>
-    <head><title>Register</title></head>
-    <body><h1>Signup</h1>
-    <form method="Post">
+<head>
+    <title>Register</title>
+</head>
+<body>
+    <h1>Signup</h1>
+    <form method="post">
         {% csrf_token %}
-        {{form.as_p}}
+        {{ form.non_field_errors }}
+
+        <div>
+            <label for="{{ form.username.id_for_label }}">{{ form.username.label }}</label>
+            {{ form.username }}
+            {{ form.username.errors }}
+        </div>
+
+        <div>
+            <label for="{{ form.email.id_for_label }}">{{ form.email.label }}</label>
+            {{ form.email }}
+            {{ form.email.errors }}
+        </div>
+
+        <div>
+            <label for="{{ form.password1.id_for_label }}">{{ form.password1.label }}</label>
+            {{ form.password1 }}
+            {{ form.password1.errors }}
+        </div>
+
+        <div>
+            <label for="{{ form.password2.id_for_label }}">{{ form.password2.label }}</label>
+            {{ form.password2 }}
+            {{ form.password2.errors }}
+        </div>
+
+        <div>
+            <label for="{{ form.user_category.id_for_label }}">{{ form.user_category.label }}</label>
+            {{ form.user_category }}  <!-- Dropdown for user category -->
+            {{ form.user_category.errors }}
+        </div>
+
         <button type="submit">Register</button>
-        <a href="{% url 'login' %}"> Already Have an Account ?</a>
+        <a href="{% url 'login' %}">Already Have an Account?</a>
     </form>
 </body>
 </html>

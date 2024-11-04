@@ -1,5 +1,9 @@
 <title>Home</title>
-<h2>Welcome to the Dashboard</h2>
+<h1>Welcome Back{{user.username}}</h1>
 <p>Here you can find an overview of your data and recent activities.</p>
 
+<form method="POST" action="{% url 'delete_user' %}">
+    {% csrf_token %}
+    <button type="submit">Delete Account</button>
+</form>
 <button><a href="{%url 'logout' %}">logout</a></button>

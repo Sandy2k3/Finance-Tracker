@@ -15,6 +15,14 @@ class RegisterForm(UserCreationForm):
         widget=forms.PasswordInput,
         help_text='',
     )
+    user_category = forms.ChoiceField(
+        label="User Category",
+        choices=[
+            ('business', 'Business'),
+            ('personal', 'Personal'),
+        ],
+        required=True
+    )
 
     class Meta:
         model = CustomUser
@@ -24,6 +32,7 @@ class RegisterForm(UserCreationForm):
             'password1': None,
             'password2': None,
             'email': None,
+            'user_category':None
         }
 
 class LoginForm(forms.Form):
