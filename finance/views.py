@@ -3,21 +3,21 @@ from django.contrib.auth import authenticate, login ,logout
 from django.contrib.auth.models import User 
 from django.contrib.auth.decorators import login_required 
 from django.conf import settings
-from .forms import registerform, loginform
+from .forms import RegisterForm, LoginForm
 
 def registerPage(request):
     if request.method == 'POST':
-        form = registerform(request.POST)
+        form = RegisterForm(request.POST)
         if form.is_valid():
             form.save()
             return redirect('login')  # Redirect to login page after registration
     else:
-        form = registerform()  # Empty form for GET requests
+        form = RegisterForm()  # Empty form for GET requests
     return render(request, 'finance/register.html', {'form': form})
 
 def loginPage(request):
     if request.method == 'POST':
-        form = loginform(request.POST)
+        form = LoginForm(request.POST)
         if form.is_valid():
             email = form.cleaned_data.get('email')
             password = form.cleaned_data.get('password')
@@ -37,7 +37,7 @@ def loginPage(request):
             except User.DoesNotExist:
                 form.add_error(None, "User with this email does not exist.")
     else:
-        form = loginform()  # Display an empty form for GET requests
+        form = LoginForm()  # Display an empty form for GET requests
 
     return render(request, 'finance/login.html', {'form': form})
 

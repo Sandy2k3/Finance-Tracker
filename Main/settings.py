@@ -64,6 +64,14 @@ DATABASES = {
     }
 }
 
+'''DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'finance',  
+        'USER': 'prajwal',
+        'PASSWORD': 'prajwal',
+    }
+}'''
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
     {

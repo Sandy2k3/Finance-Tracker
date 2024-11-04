@@ -1,31 +1,31 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import User
+from .models import CustomUser
 
-class registerform(UserCreationForm):
-        password1 = forms.CharField(
+class RegisterForm(UserCreationForm):
+    password1 = forms.CharField(
         label="Password",
         strip=False,
         widget=forms.PasswordInput,
-        help_text='',  # Remove help text
+        help_text='',
     )
-        password2 = forms.CharField(
+    password2 = forms.CharField(
         label="Confirm Password",
         strip=False,
         widget=forms.PasswordInput,
-        help_text='',  # Remove help text
+        help_text='',
     )
 
-class Meta:
-        model=User
-        fields=['first_name','last_name','username','email','password1','password2']
+    class Meta:
+        model = CustomUser
+        fields = ['username', 'email', 'password1', 'password2']
         help_texts = {
-            'username': None,  # Remove help text for username
-            'password1': None,  # Remove help text for password
+            'username': None,
+            'password1': None,
             'password2': None,
-            'email':None,    # Remove help text for password confirmation
+            'email': None,
         }
 
-class loginform(forms.Form):
-    email= forms.EmailField(max_length=254,required=True)
-    password=forms.CharField(max_length=128,required=True,widget=forms.PasswordInput)
+class LoginForm(forms.Form):
+    email = forms.EmailField(max_length=254, required=True)
+    password = forms.CharField(max_length=128, required=True, widget=forms.PasswordInput)
