@@ -22,8 +22,8 @@ def loginPage(request):
             email = form.cleaned_data.get('email')
             password = form.cleaned_data.get('password')
 
-            # Authenticate directly using email and password
-            user = authenticate(request, email=email, password=password)
+            # Authenticate with 'username' as email
+            user = authenticate(request, username=email, password=password)
             if user is not None:
                 login(request, user)
                 return redirect(settings.LOGIN_REDIRECT_URL)
