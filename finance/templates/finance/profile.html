@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+</head>
+<body>
+    <h1>{{ user.username }}'s Profile</h1>
+    <p>Email: {{ user.email }}</p>
+    <p>Category: {{ user.user_category }}</p>
+    <!-- Add other profile details as needed -->
+
+    <!-- Delete Account Button -->
+    <form method="POST" action="{% url 'delete_user' %}">
+        {% csrf_token %}
+        <button type="submit" style="background-color: #dc3545; color: #fff; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer;">
+            Delete Account
+        </button>
+    </form>
+</body>
+</html>

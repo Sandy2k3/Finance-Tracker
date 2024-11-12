@@ -1,9 +1,193 @@
-<title>Home</title>
-<h1>Welcome Back{{user.username}}</h1>
-<p>Here you can find an overview of your data and recent activities.</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <style>
+        /* General Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
 
-<form method="POST" action="{% url 'delete_user' %}">
-    {% csrf_token %}
-    <button type="submit">Delete Account</button>
-</form>
-<button><a href="{%url 'logout' %}">logout</a></button>
+        /* Body Styling */
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f4f4f9;
+            color: #333;
+            min-height: 100vh;
+        }
+
+        /* Navbar Styling */
+        .navbar {
+            width: 100%;
+            padding: 15px 20px;
+            background-color: #007bff;
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar h1 {
+            font-size: 24px;
+        }
+
+        /* User Icon */
+        .user-menu {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .user-menu img {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            border: 2px solid #fff;
+        }
+
+        /* Dropdown Menu */
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 50px;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .dropdown-menu a {
+            display: block;
+            padding: 10px 15px;
+            color: #333;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .dropdown-menu a:hover {
+            background-color: #f4f4f9;
+        }
+
+        /* Container Styling */
+        .container {
+            max-width: 800px;
+            margin-top: 100px;
+            padding: 20px;
+            border-radius: 8px;
+            background-color: #ffffff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        /* Title */
+        h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        /* Paragraph */
+        p {
+            font-size: 16px;
+            color: #555;
+            margin-bottom: 20px;
+        }
+
+        /* Interactive Boxes */
+        .box-container {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 30px;
+        }
+
+        .box {
+            width: 200px;
+            height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #007bff;
+            color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            text-decoration: none;
+            font-size: 18px;
+        }
+
+        .box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Individual Box Colors */
+        .box.add-transaction {
+            background-color: #28a745;
+        }
+
+        .box.perform-analysis {
+            background-color: #17a2b8;
+        }
+
+        .box.generate-report {
+            background-color: #ffc107;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <div class="navbar">
+        <h1>Home</h1>
+        <div class="user-menu" onclick="toggleDropdown()">
+            <img src="user-icon.png" alt="User Icon">
+            <div class="dropdown-menu" id="dropdown-menu">
+                <a href="{% url 'profile' %}">Profile</a>
+                <a href="{% url 'logout' %}">Logout</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <h1>Welcome Back, {{ user.username }}</h1>
+        <p>Here you can find an overview of your data and recent activities.</p>
+
+        <!-- Interactive Boxes -->
+        <div class="box-container">
+            <a href="{% url 'add_transaction' %}" class="box add-transaction">Add Transaction</a>
+            <a href="{% url 'perform_analysis' %}" class="box perform-analysis">Perform Analysis</a>
+            <a href="{% url 'generate_report' %}" class="box generate-report">Generate Report</a>
+        </div>
+    </div>
+
+    <script>
+        // Toggle dropdown visibility
+        function toggleDropdown() {
+            const dropdown = document.getElementById('dropdown-menu');
+            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+        }
+
+        // Close the dropdown if clicked outside
+        window.onclick = function(event) {
+            if (!event.target.matches('.user-menu img')) {
+                const dropdown = document.getElementById('dropdown-menu');
+                if (dropdown && dropdown.style.display === 'block') {
+                    dropdown.style.display = 'none';
+                }
+            }
+        }
+    </script>
+</body>
+</html>

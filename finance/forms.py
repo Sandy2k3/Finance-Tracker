@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from .models import CustomUser
+from .models import CustomUser,Transaction
 
 class RegisterForm(UserCreationForm):
     password1 = forms.CharField(
@@ -38,3 +38,11 @@ class RegisterForm(UserCreationForm):
 class LoginForm(forms.Form):
     email = forms.EmailField(max_length=254, required=True)
     password = forms.CharField(max_length=128, required=True, widget=forms.PasswordInput)
+
+class TransactionForm(forms.ModelForm):
+    class Meta:
+        model = Transaction
+        fields = ['subcat', 't_description', 'amount', 'custom', 't_date']
+        widgets = {
+            't_date': forms.DateInput(attrs={'type': 'date'}),
+        }
