@@ -36,8 +36,13 @@ class RegisterForm(UserCreationForm):
         }
 
 class LoginForm(forms.Form):
-    email = forms.EmailField(max_length=254, required=True)
-    password = forms.CharField(max_length=128, required=True, widget=forms.PasswordInput)
+    username_or_email = forms.CharField(
+        label="Username or Email",
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+    password = forms.CharField(
+        widget=forms.PasswordInput(attrs={'class': 'form-control'})
+    )
 
 class TransactionForm(forms.ModelForm):
     class Meta:

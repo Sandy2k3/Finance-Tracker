@@ -1,45 +1,169 @@
 <html>
 <head>
     <title>Register</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .register-container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #666;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+
+        .error-message {
+            color: #d32f2f;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .register-btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 4px;
+            width: 100%;
+            font-size: 16px;
+            cursor: pointer;
+            margin-bottom: 15px;
+        }
+
+        .register-btn:hover {
+            background-color: #45a049;
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .login-link a {
+            color: #4CAF50;
+            text-decoration: none;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+
+        .password-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 10px;
+            cursor: pointer;
+            user-select: none;
+        }
+    </style>
 </head>
 <body>
-    <h1>Signup</h1>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.non_field_errors }}
+    <div class="register-container">
+        <h1>Sign Up</h1>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
 
-        <div>
-            <label for="{{ form.username.id_for_label }}">{{ form.username.label }}</label>
-            {{ form.username }}
-            {{ form.username.errors }}
-        </div>
+            <div class="form-group">
+                <label for="{{ form.username.id_for_label }}">Username</label>
+                {{ form.username }}
+                {{ form.username.errors }}
+            </div>
 
-        <div>
-            <label for="{{ form.email.id_for_label }}">{{ form.email.label }}</label>
-            {{ form.email }}
-            {{ form.email.errors }}
-        </div>
+            <div class="form-group">
+                <label for="{{ form.email.id_for_label }}">Email</label>
+                {{ form.email }}
+                {{ form.email.errors }}
+            </div>
 
-        <div>
-            <label for="{{ form.password1.id_for_label }}">{{ form.password1.label }}</label>
-            {{ form.password1 }}
-            {{ form.password1.errors }}
-        </div>
+            <div class="form-group">
+                <label for="{{ form.password1.id_for_label }}">Password</label>
+                <div class="password-container">
+                    {{ form.password1 }}
+                    <button type="button" class="toggle-password" onclick="togglePasswordVisibility('id_password1')">
+                        👁️
+                    </button>
+                </div>
+                {{ form.password1.errors }}
+            </div>
 
-        <div>
-            <label for="{{ form.password2.id_for_label }}">{{ form.password2.label }}</label>
-            {{ form.password2 }}
-            {{ form.password2.errors }}
-        </div>
+            <div class="form-group">
+                <label for="{{ form.password2.id_for_label }}">Confirm Password</label>
+                <div class="password-container">
+                    {{ form.password2 }}
+                    <button type="button" class="toggle-password" onclick="togglePasswordVisibility('id_password2')">
+                        👁️
+                    </button>
+                </div>
+                {{ form.password2.errors }}
+            </div>
 
-        <div>
-            <label for="{{ form.user_category.id_for_label }}">{{ form.user_category.label }}</label>
-            {{ form.user_category }}  <!-- Dropdown for user category -->
-            {{ form.user_category.errors }}
-        </div>
+            <div class="form-group">
+                <label for="{{ form.user_category.id_for_label }}">Account Type</label>
+                {{ form.user_category }}
+                {{ form.user_category.errors }}
+            </div>
 
-        <button type="submit">Register</button>
-        <a href="{% url 'login' %}">Already Have an Account?</a>
-    </form>
+            <button type="submit" class="register-btn">Register</button>
+            <div class="login-link">
+                Already have an account? <a href="{% url 'login' %}">Login</a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function togglePasswordVisibility(inputId) {
+            const passwordInput = document.getElementById(inputId);
+            const toggleButton = passwordInput.nextElementSibling;
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleButton.innerHTML = '🔒';
+            } else {
+                passwordInput.type = 'password';
+                toggleButton.innerHTML = '👁️';
+            }
+        }
+    </script>
 </body>
 </html>

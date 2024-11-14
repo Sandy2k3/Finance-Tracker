@@ -10,6 +10,8 @@ from .forms import CustomCategoryForm
 from django.contrib import messages
 from django.http import JsonResponse
 from .forms import BankBalanceForm
+from django.views.decorators.csrf import csrf_protect, ensure_csrf_cookie
+from django.utils.decorators import method_decorator
 
 def registerPage(request):
     if request.method == 'POST':
@@ -95,18 +97,20 @@ def registerPage(request):
         form = RegisterForm()
     return render(request, 'finance/register.html', {'form': form})
 
+@ensure_csrf_cookie
+@csrf_protect
 def loginPage(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
-            email = form.cleaned_data.get('email')
+            email = form.cleaned_data.get('username_or_email')
             password = form.cleaned_data.get('password')
-
-            # Authenticate with 'username' as email
-            user = authenticate(request, username=email, password=password)
+            
+            user = authenticate(email=email, password=password)
+            
             if user is not None:
                 login(request, user)
-                return redirect(settings.LOGIN_REDIRECT_URL)
+                return redirect('home')
             else:
                 form.add_error(None, "Invalid email or password.")
     else:
