@@ -81,5 +81,42 @@ class Transaction(models.Model):
     custom = models.CharField(max_length=255, blank=True, null=True)
     t_date = models.DateField()
 
+    # New fields for descriptive labels
+    category_name = models.CharField(max_length=255, default='Default Category')
+
+    subcategory_name = models.CharField(max_length=150, default='Default SubCategory')
+
+    def save(self, *args, **kwargs):
+        is_new = self.pk is None  # Check if this is a new transaction
+        
+        # Populate category and subcategory names
+        self.category_name = self.subcat.category.cat_name
+        self.subcategory_name = self.subcat.subcat_name
+        
+        super().save(*args, **kwargs)
+        
+        # Update bank balance only for new transactions
+        if is_new:
+            bank_balance = self.user.bank_balance
+            bank_balance.update_balance(self.amount, self.category_name)
+
     def __str__(self):
         return f"Transaction {self.t_id} - {self.amount}"
+
+    class Meta:
+        ordering = ['-t_date', '-t_id']  # Most recent first
+
+class BankBalance(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='bank_balance')
+    balance = models.DecimalField(max_digits=12, decimal_places=2)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.user.username}'s Balance: {self.balance}"
+
+    def update_balance(self, transaction_amount, transaction_type):
+        if transaction_type == 'Income':
+            self.balance += transaction_amount
+        else:  # Expenses
+            self.balance -= transaction_amount
+        self.save()

@@ -160,11 +160,71 @@
             color: white;
             font-weight: bold;
             transition: transform 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
         
         .box:hover {
             transform: translateY(-5px);
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .box i {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .add-transaction { background-color: #4CAF50; }
+        .manage-transactions { background-color: #FF9800; }
+        .perform-analysis { background-color: #2196F3; }
+        .generate-report { background-color: #9C27B0; }
+
+        /* Hover effects */
+        .add-transaction:hover { background-color: #45a049; }
+        .manage-transactions:hover { background-color: #FFA500; }
+        .perform-analysis:hover { background-color: #1976D2; }
+        .generate-report:hover { background-color: #7B1FA2; }
+
+        .balance-container {
+            margin: 20px 0;
+        }
+        
+        .balance-box {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .balance-amount {
+            font-size: 32px;
+            font-weight: bold;
+            color: #2e7d32;
+            margin: 10px 0;
+        }
+        
+        .balance-updated {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+        
+        .update-balance-btn {
+            display: inline-block;
+            background-color: #4CAF50;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+        
+        .update-balance-btn:hover {
+            background-color: #45a049;
         }
     </style>
 </head>
@@ -184,13 +244,35 @@
     <!-- Main Content -->
     <div class="container">
         <h1>Welcome Back, {{ user.username }}</h1>
-        <p>Here you can find an overview of your data and recent activities.</p>
+        
+        <!-- Bank Balance Display -->
+        <div class="balance-container">
+            <div class="balance-box">
+                <h2>Current Balance</h2>
+                <div class="balance-amount">${{ bank_balance.balance|floatformat:2 }}</div>
+                <div class="balance-updated">Last updated: {{ bank_balance.last_updated|date:"F j, Y, g:i a" }}</div>
+                <a href="{% url 'update_balance' %}" class="update-balance-btn">Update Balance</a>
+            </div>
+        </div>
 
-        <!-- Interactive Boxes -->
+        <!-- Rest of your home page content -->
         <div class="box-container">
-            <a href="{% url 'add_transaction' %}" class="box add-transaction">Add Transaction</a>
-            <a href="{% url 'perform_analysis' %}" class="box perform-analysis">Perform Analysis</a>
-            <a href="{% url 'generate_report' %}" class="box generate-report">Generate Report</a>
+            <a href="{% url 'add_transaction' %}" class="box add-transaction">
+                <i class="fas fa-plus"></i>
+                Add Transaction
+            </a>
+            <a href="{% url 'transaction_list' %}" class="box manage-transactions">
+                <i class="fas fa-list"></i>
+                Manage Transactions
+            </a>
+            <a href="{% url 'perform_analysis' %}" class="box perform-analysis">
+                <i class="fas fa-chart-bar"></i>
+                Perform Analysis
+            </a>
+            <a href="{% url 'generate_report' %}" class="box generate-report">
+                <i class="fas fa-file-alt"></i>
+                Generate Report
+            </a>
         </div>
     </div>
 

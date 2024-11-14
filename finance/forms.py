@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.core.exceptions import ValidationError
-from .models import CustomUser, Transaction, Category, SubCategory, UserCategory
+from .models import CustomUser, Transaction, Category, SubCategory, UserCategory, BankBalance
 
 class RegisterForm(UserCreationForm):
     password1 = forms.CharField(
@@ -91,3 +91,14 @@ class CustomCategoryForm(forms.ModelForm):
             raise ValidationError('Category name must be at least 3 characters long.')
         
         return name
+
+class BankBalanceForm(forms.ModelForm):
+    class Meta:
+        model = BankBalance
+        fields = ['balance']
+        widgets = {
+            'balance': forms.NumberInput(attrs={
+                'step': '0.01',
+                'class': 'form-control'
+            })
+        }

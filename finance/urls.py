@@ -14,4 +14,6 @@ urlpatterns = [
     path('perform_analysis/', views.perform_analysis, name='perform_analysis'),
     path('generate_report/', views.generate_report, name='generate_report'),
     path('get_subcategories/', views.get_subcategories, name='get_subcategories'),
+    path('delete-transaction/<int:t_id>/', views.delete_transaction, name='delete_transaction'),
+    path('update-balance/', views.update_balance, name='update_balance'),
 ]

@@ -1,29 +1,33 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.conf import settings
 from django.urls import reverse_lazy
 from .forms import RegisterForm, LoginForm
-from .models import CustomUser ,UserCategory, Category, SubCategory, Transaction
+from .models import CustomUser ,UserCategory, Category, SubCategory, Transaction, BankBalance
 from django.contrib.auth.decorators import login_required  # Import CustomUser explicitly
 from .forms import TransactionForm
 from .forms import CustomCategoryForm
 from django.contrib import messages
 from django.http import JsonResponse
+from .forms import BankBalanceForm
 
 def registerPage(request):
     if request.method == 'POST':
         form = RegisterForm(request.POST)
         if form.is_valid():
-            # Save the user
             user = form.save()
-            print(f"Created user: {user.username}")
+            
+            # Create initial bank balance with 0
+            BankBalance.objects.create(
+                user=user,
+                balance=0
+            )
             
             # Create UserCategory
             user_category = UserCategory.objects.create(
                 user=user,
                 user_category=user.user_category
             )
-            print(f"Created user category: {user_category}")
             
             # Define categories based on user type
             if user.user_category == 'business':
@@ -114,7 +118,15 @@ def logoutPage(request):
     return redirect('login')
 @login_required(login_url='login')  # Redirects to login if user is not authenticated
 def home(request):
-    return render(request, 'finance/home.html')
+    try:
+        bank_balance = request.user.bank_balance
+    except BankBalance.DoesNotExist:
+        bank_balance = BankBalance.objects.create(user=request.user, balance=0)
+    
+    context = {
+        'bank_balance': bank_balance,
+    }
+    return render(request, 'finance/home.html', context)
 
 @login_required(login_url='login')
 def delete_user(request):
@@ -234,3 +246,33 @@ def get_subcategories(request):
     print(f"Subcategories: {subcategories_list}")
     
     return JsonResponse(subcategories_list, safe=False)
+
+@login_required
+def delete_transaction(request, t_id):
+    # Get the transaction
+    transaction = get_object_or_404(Transaction, t_id=t_id, user=request.user)
+    
+    if request.method == 'POST':
+        transaction.delete()
+        messages.success(request, 'Transaction deleted successfully!')
+        return redirect('transaction_list')
+    
+    return render(request, 'finance/delete_transaction.html', {'transaction': transaction})
+
+@login_required
+def update_balance(request):
+    try:
+        bank_balance = BankBalance.objects.get(user=request.user)
+    except BankBalance.DoesNotExist:
+        bank_balance = BankBalance.objects.create(user=request.user, balance=0)
+
+    if request.method == 'POST':
+        form = BankBalanceForm(request.POST, instance=bank_balance)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Bank balance updated successfully!')
+            return redirect('home')
+    else:
+        form = BankBalanceForm(instance=bank_balance)
+
+    return render(request, 'finance/update_balance.html', {'form': form})
