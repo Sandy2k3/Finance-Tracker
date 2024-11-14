@@ -2,15 +2,209 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Transaction</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        select, input[type="text"], input[type="number"], input[type="date"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 16px;
+            background-color: #fff;
+        }
+        
+        select {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1em;
+        }
+        
+        select:focus, input:focus {
+            outline: none;
+            border-color: #4CAF50;
+            box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+        }
+        
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .category-group {
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 4px;
+        }
+
+        .income-option {
+            color: #2e7d32; /* Dark green for income */
+        }
+
+        .expense-option {
+            color: #c62828; /* Dark red for expenses */
+        }
+
+        .custom-option {
+            color: #1565c0; /* Blue for custom */
+        }
+
+        .error-message {
+            color: #d32f2f;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Add Transaction</h1>
-    <form method="POST" action="">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Add Transaction</button>
-    </form>
+    <div class="container">
+        <h1>Add Transaction</h1>
+        <form method="POST" id="transactionForm">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="id_category">Category Type:</label>
+                <select name="category" id="id_category" required>
+                    <option value="">Select Category Type</option>
+                    <optgroup label="Main Categories">
+                        <option value="Income" class="income-option">Income</option>
+                        <option value="Expenses" class="expense-option">Expenses</option>
+                    </optgroup>
+                    <optgroup label="Other">
+                        <option value="Custom" class="custom-option">Custom Category</option>
+                    </optgroup>
+                </select>
+            </div>
+            
+            <div id="subcategory-container">
+                <!-- Will be populated by JavaScript -->
+            </div>
+            
+            <div class="form-group">
+                <label for="id_t_description">Description:</label>
+                <input type="text" name="t_description" id="id_t_description" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="id_amount">Amount:</label>
+                <input type="number" name="amount" id="id_amount" step="0.01" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="id_t_date">Date:</label>
+                <input type="date" name="t_date" id="id_t_date" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="id_custom">Notes (Optional):</label>
+                <input type="text" name="custom" id="id_custom">
+            </div>
+            
+            <button type="submit">Add Transaction</button>
+        </form>
+        
+        <a href="{% url 'home' %}" style="display: block; margin-top: 20px; color: #666; text-decoration: none;">
+            ← Back to Home
+        </a>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const categorySelect = document.getElementById('id_category');
+            const subcategoryContainer = document.getElementById('subcategory-container');
+            
+            function updateSubcategoryField() {
+                const category = categorySelect.value;
+                
+                // Clear current content
+                subcategoryContainer.innerHTML = '';
+                
+                if (category === 'Custom') {
+                    // Show text input for custom subcategory
+                    subcategoryContainer.innerHTML = `
+                        <div class="form-group">
+                            <label for="id_subcat">Custom Subcategory:</label>
+                            <input type="text" 
+                                   id="id_subcat" 
+                                   name="subcat" 
+                                   class="form-control custom-input" 
+                                   placeholder="Enter custom subcategory"
+                                   required>
+                        </div>`;
+                } else if (category) {
+                    // Show dropdown for predefined categories
+                    subcategoryContainer.innerHTML = `
+                        <div class="form-group">
+                            <label for="id_subcat">Subcategory:</label>
+                            <select id="id_subcat" name="subcat" required>
+                                <option value="">Select Subcategory</option>
+                            </select>
+                        </div>`;
+                    
+                    // Fetch and populate subcategories
+                    fetch(`/finance/get_subcategories/?category=${category}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            const subcatSelect = document.getElementById('id_subcat');
+                            data.forEach(item => {
+                                const option = document.createElement('option');
+                                option.value = item.id;
+                                option.textContent = item.subcat_name;
+                                subcatSelect.appendChild(option);
+                            });
+                        });
+                }
+            }
+            
+            categorySelect.addEventListener('change', updateSubcategoryField);
+            
+            // Initial load
+            if (categorySelect.value) {
+                updateSubcategoryField();
+            }
+        });
+    </script>
 </body>
 </html>
+

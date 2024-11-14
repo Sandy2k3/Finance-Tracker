@@ -13,4 +13,5 @@ urlpatterns = [
     path("categories/", views.category_list, name="category_list"),
     path('perform_analysis/', views.perform_analysis, name='perform_analysis'),
     path('generate_report/', views.generate_report, name='generate_report'),
+    path('get_subcategories/', views.get_subcategories, name='get_subcategories'),
 ]
