@@ -1,0 +1,27 @@
+name: Sync with GitLab
+
+on:
+  push:
+    branches:
+      - main  # Or your default branch
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout GitHub Repository
+        uses: actions/checkout@v2
+
+      - name: Set up Git
+        run: |
+          git config --global user.name "Sandy2k3"
+          git config --global user.email "sandeshgc2003@gmail.com"
+
+      - name: Add GitLab Remote
+        run: git remote add gitlab https://gitlab.com/Sandy2k3/Finance-Tracker.git
+
+      - name: Fetch from GitLab
+        run: git fetch gitlab
+
+      - name: Push to GitHub
+        run: git push origin main --force
