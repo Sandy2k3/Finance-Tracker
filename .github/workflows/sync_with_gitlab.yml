@@ -3,7 +3,7 @@ name: Sync with GitLab
 on:
   push:
     branches:
-      - main  # Or your default branch
+      - master  # Replace with your default branch if different
 
 jobs:
   sync:
@@ -20,8 +20,6 @@ jobs:
       - name: Add GitLab Remote
         run: git remote add gitlab https://gitlab.com/Sandy2k3/Finance-Tracker.git
 
-      - name: Fetch from GitLab
-        run: git fetch gitlab
-
-      - name: Push to GitHub
-        run: git push origin main --force
+      - name: Push to GitLab
+        run: |
+          git push -u gitlab master --force
