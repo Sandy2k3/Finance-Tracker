@@ -21,7 +21,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'finance',
-    'social_django'
+    'social_django',
+    'django_crontab'
 ]
 
 MIDDLEWARE = [
@@ -66,14 +67,6 @@ DATABASES = {
     }
 }
 
-'''DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'finance',  
-        'USER': 'prajwal',
-        'PASSWORD': 'prajwal',
-    }
-}'''
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -110,4 +103,8 @@ AUTH_USER_MODEL = 'finance.CustomUser'
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
 )
+
+CRONJOBS = [
+    ('0 0 * * *', 'finance.management.commands.delete_inactive_users.Command.handle')
+]
 

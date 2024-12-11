@@ -24,10 +24,16 @@ class RegisterForm(UserCreationForm):
         ],
         required=True
     )
+    country = forms.ChoiceField(
+        label="Country",
+        choices=CustomUser._meta.get_field('country').choices,
+        required=True,
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
 
     class Meta:
         model = CustomUser
-        fields = ['username', 'email', 'password1', 'password2', 'user_category']
+        fields = ['username', 'email', 'password1', 'password2', 'user_category', 'country']
         help_texts = {
             'username': None,
             'password1': None,

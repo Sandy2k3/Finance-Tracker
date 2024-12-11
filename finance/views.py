@@ -12,12 +12,15 @@ from django.http import JsonResponse
 from .forms import BankBalanceForm
 from django.views.decorators.csrf import csrf_protect, ensure_csrf_cookie
 from django.utils.decorators import method_decorator
+from django.utils import timezone
 
 def registerPage(request):
     if request.method == 'POST':
         form = RegisterForm(request.POST)
         if form.is_valid():
             user = form.save()
+            user.country = form.cleaned_data['country']
+            user.save()
             
             # Create initial bank balance with 0
             BankBalance.objects.create(
@@ -136,10 +139,12 @@ def home(request):
 def delete_user(request):
     if request.method == 'POST':
         user = request.user
-        logout(request)  # Log out the user before deletion
-        user.delete()  # Delete the user
-        return redirect('login')  # Redirect to login page after deletion
-   
+        user.delete()
+        logout(request)
+        messages.success(request, 'Your account has been deleted.')
+        return redirect('home')
+    return redirect('profile')
+
 @login_required
 def profile_view(request):
     # Pass the user info to the template
@@ -280,3 +285,21 @@ def update_balance(request):
         form = BankBalanceForm(instance=bank_balance)
 
     return render(request, 'finance/update_balance.html', {'form': form})
+
+def login_view(request):
+    if request.method == 'POST':
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            user = authenticate(
+                username=form.cleaned_data['username_or_email'],
+                password=form.cleaned_data['password']
+            )
+            if user and user.is_deleted:
+                user.restore()
+                messages.success(request, 'Your account has been restored!')
+            if user:
+                login(request, user)
+                return redirect('home')
+    else:
+        form = LoginForm()
+    return render(request, 'finance/login.html', {'form': form})

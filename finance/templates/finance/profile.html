@@ -11,6 +11,13 @@
     <p>Category: {{ user.user_category }}</p>
     <!-- Add other profile details as needed -->
 
+    {% if user.is_deleted %}
+    <div class="alert alert-warning">
+        <p>Your account is scheduled for deletion on {{ user.deleted_at|add:"60 days"|date:"F j, Y" }}</p>
+        <p>Log in again to restore your account.</p>
+    </div>
+    {% endif %}
+
     <!-- Delete Account Button -->
     <form method="POST" action="{% url 'delete_user' %}">
         {% csrf_token %}

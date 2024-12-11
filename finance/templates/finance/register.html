@@ -139,7 +139,13 @@
             </div>
 
             <div class="form-group">
-                <label for="{{ form.user_category.id_for_label }}">Account Type</label>
+                <label for="{{ form.country.id_for_label }}">Country</label>
+                {{ form.country }}
+                {{ form.country.errors }}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.user_category.id_for_label }}">User Category</label>
                 {{ form.user_category }}
                 {{ form.user_category.errors }}
             </div>
