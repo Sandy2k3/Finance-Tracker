@@ -270,6 +270,22 @@ canvas {
     text-align: center;
 }
 
+/* Footer */
+.footer {
+    width: 100%;
+    padding: 20px;
+    background-color: #ffffff;
+    text-align: center;
+    box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+    margin-top: auto;
+}
+
+.footer p {
+    color: #666;
+    font-size: 14px;
+    margin: 0;
+}
+
 /* Responsive adjustments */
 @media (max-width: 1200px) {
     .container {
