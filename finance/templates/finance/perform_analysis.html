@@ -1,11 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    {% load static %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Perform Analysis</title>
+    <title>Financial Analysis</title>
+    <link rel="stylesheet" href="{% static 'perform_analysis.css' %}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{% static 'js/perform_analysis.js' %}"></script>
 </head>
 <body>
-    <h1>{{ message }}</h1>
+    <div class="container">
+        <h1>Financial Analysis</h1>
+        
+        <div class="charts-container">
+            <!-- Income Chart -->
+            <div class="chart-wrapper">
+                <h2>Monthly Income</h2>
+                <canvas id="incomeChart"></canvas>
+            </div>
+            
+            <!-- Expenses Chart -->
+            <div class="chart-wrapper">
+                <h2>Monthly Expenses</h2>
+                <canvas id="expensesChart"></canvas>
+            </div>
+            
+            <!-- Net Balance Chart -->
+            <div class="chart-wrapper">
+                <h2>Monthly Net Balance</h2>
+                <canvas id="netBalanceChart"></canvas>
+            </div>
+            
+            <!-- Pie Chart for Breakdown -->
+            <div class="pie-chart-wrapper">
+                <h2>Category Breakdown</h2>
+                <div class="pie-chart-info">Click on a month in any chart above to see detailed breakdown</div>
+                <canvas id="pieChart"></canvas>
+            </div>
+        </div>
+
+        <a href="{% url 'home' %}" class="back-link">← Back to Home</a>
+    </div>
 </body>
 </html>

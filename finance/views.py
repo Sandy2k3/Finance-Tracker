@@ -13,6 +13,10 @@ from .forms import BankBalanceForm
 from django.views.decorators.csrf import csrf_protect, ensure_csrf_cookie
 from django.utils.decorators import method_decorator
 from django.utils import timezone
+from django.db.models import Sum
+from django.db.models.functions import ExtractMonth, ExtractYear
+from datetime import datetime
+import calendar
 
 def registerPage(request):
     if request.method == 'POST':
@@ -219,8 +223,9 @@ def category_list(request):
 
 
 @login_required
+@ensure_csrf_cookie
 def perform_analysis(request):
-    return render(request, 'finance/perform_analysis.html', {'message': 'Performing analysis... this will be where the analysis happens!'})
+    return render(request, 'finance/perform_analysis.html')
 
 @login_required
 def generate_report(request):
@@ -228,33 +233,44 @@ def generate_report(request):
 
 @login_required
 def get_subcategories(request):
-    category = request.GET.get('category')
-    user = request.user
-    
-    # Debug prints
-    print(f"User: {user.username}")
-    print(f"Selected category: {category}")
-    
-    # Get user categories
-    user_categories = UserCategory.objects.filter(user=user)
-    print(f"User categories: {user_categories}")
-    
-    # Get the category object
-    categories = Category.objects.filter(
-        user_cat__in=user_categories,
-        cat_name=category
-    )
-    print(f"Found categories: {categories}")
-    
-    # Get subcategories
-    subcategories = SubCategory.objects.filter(
-        category__in=categories
-    ).values('id', 'subcat_name')
-    
-    subcategories_list = list(subcategories)
-    print(f"Subcategories: {subcategories_list}")
-    
-    return JsonResponse(subcategories_list, safe=False)
+    try:
+        category = request.GET.get('category')
+        if not category:
+            return JsonResponse({'error': 'Category parameter is required'}, status=400)
+            
+        user = request.user
+        print(f"Fetching subcategories for user {user.username}, category: {category}")
+        
+        # Get user categories
+        user_categories = UserCategory.objects.filter(user=user)
+        if not user_categories.exists():
+            print("No user categories found")
+            return JsonResponse({'error': 'No categories found for user'}, status=404)
+        
+        # Get the category object
+        categories = Category.objects.filter(
+            user_cat__in=user_categories,
+            cat_name=category
+        )
+        if not categories.exists():
+            print(f"No category found with name: {category}")
+            return JsonResponse({'error': f'Category {category} not found'}, status=404)
+        
+        print(f"Found categories: {[cat.cat_name for cat in categories]}")
+        
+        # Get subcategories
+        subcategories = SubCategory.objects.filter(
+            category__in=categories
+        ).values('id', 'subcat_name')
+        
+        subcategories_list = list(subcategories)
+        print(f"Returning subcategories: {subcategories_list}")
+        
+        return JsonResponse(subcategories_list, safe=False)
+        
+    except Exception as e:
+        print(f"Error in get_subcategories: {str(e)}")
+        return JsonResponse({'error': str(e)}, status=500)
 
 @login_required
 def delete_transaction(request, t_id):
@@ -303,3 +319,147 @@ def login_view(request):
     else:
         form = LoginForm()
     return render(request, 'finance/login.html', {'form': form})
+
+@login_required
+@ensure_csrf_cookie
+def get_monthly_data(request):
+    current_year = datetime.now().year
+    print(f"Fetching data for year: {current_year}")
+    
+    try:
+        # Get monthly aggregated data
+        monthly_data = Transaction.objects.filter(
+            user=request.user,
+            t_date__year=current_year
+        ).annotate(
+            month=ExtractMonth('t_date')
+        ).values('month', 'subcat__category__cat_name').annotate(
+            total=Sum('amount')
+        ).order_by('month')
+        
+        print(f"Raw monthly data: {list(monthly_data)}")
+        
+        # Initialize monthly totals
+        months = {i: {'Income': 0, 'Expenses': 0} for i in range(1, 13)}
+        
+        # Aggregate the data
+        for entry in monthly_data:
+            month = entry['month']
+            category = entry['subcat__category__cat_name']
+            amount = float(entry['total'])
+            print(f"Processing: Month {month}, Category {category}, Amount {amount}")
+            
+            if category in months[month]:
+                months[month][category] = amount
+        
+        # Calculate net balance for each month
+        labels = [calendar.month_name[i] for i in range(1, 13)]
+        income_data = [months[i]['Income'] for i in range(1, 13)]
+        expense_data = [months[i]['Expenses'] for i in range(1, 13)]
+        net_data = [income - expense for income, expense in zip(income_data, expense_data)]
+        
+        print(f"Final processed data:")
+        print(f"Labels: {labels}")
+        print(f"Income: {income_data}")
+        print(f"Expenses: {expense_data}")
+        print(f"Net: {net_data}")
+        
+        return JsonResponse({
+            'labels': labels,
+            'income': income_data,
+            'expenses': expense_data,
+            'net': net_data
+        })
+        
+    except Exception as e:
+        print(f"Error in get_monthly_data: {str(e)}")
+        return JsonResponse({
+            'error': str(e)
+        }, status=500)
+
+@login_required
+@ensure_csrf_cookie
+def get_monthly_breakdown(request):
+    try:
+        month = request.GET.get('month')
+        category_type = request.GET.get('type', 'Expenses')  # Default to expenses
+        current_year = datetime.now().year
+        
+        print(f"\n=== Monthly Breakdown Request ===")
+        print(f"Month: {month}")
+        print(f"Category Type: {category_type}")
+        print(f"Year: {current_year}")
+        
+        try:
+            month_num = list(calendar.month_name).index(month)
+            if month_num == 0:
+                print("Error: Invalid month (got index 0)")
+                return JsonResponse({'error': 'Invalid month'}, status=400)
+        except ValueError:
+            print(f"Error: Invalid month name: {month}")
+            return JsonResponse({'error': f"Invalid month name: {month}"}, status=400)
+        
+        print(f"\nQuerying transactions for:")
+        print(f"User: {request.user.username}")
+        print(f"Month: {month_num}")
+        print(f"Category: {category_type}")
+        
+        # Get breakdown by subcategory for the specified month and category
+        breakdown_query = Transaction.objects.filter(
+            user=request.user,
+            t_date__month=month_num,
+            t_date__year=current_year,
+            subcat__category__cat_name=category_type
+        )
+        
+        transaction_count = breakdown_query.count()
+        print(f"\nFound {transaction_count} transactions")
+        
+        # Print sample of transactions for debugging
+        print("\nSample Transactions:")
+        for t in breakdown_query[:5]:
+            print(f"- Date: {t.t_date}")
+            print(f"  Amount: ${t.amount}")
+            print(f"  Category: {t.subcat.category.cat_name}")
+            print(f"  Subcategory: {t.subcat.subcat_name}")
+        
+        # Get subcategory breakdown
+        breakdown = breakdown_query.values(
+            'subcat__subcat_name'
+        ).annotate(
+            total=Sum('amount')
+        ).order_by('-total')
+        
+        print("\nBreakdown Results:")
+        print(f"Raw breakdown data: {list(breakdown)}")
+        
+        if not breakdown:
+            print(f"\nNo data found for {month} {current_year} in category {category_type}")
+            return JsonResponse({
+                'labels': [],
+                'values': [],
+                'message': f'No {category_type.lower()} data found for {month} {current_year}'
+            })
+        
+        labels = [item['subcat__subcat_name'] for item in breakdown]
+        values = [float(item['total']) for item in breakdown]
+        
+        print("\nProcessed Data:")
+        print(f"Labels: {labels}")
+        print(f"Values: {values}")
+        
+        response_data = {
+            'labels': labels,
+            'values': values
+        }
+        print(f"\nSending response: {response_data}")
+        
+        return JsonResponse(response_data)
+        
+    except Exception as e:
+        print(f"\nError in get_monthly_breakdown: {str(e)}")
+        import traceback
+        print(f"Traceback: {traceback.format_exc()}")
+        return JsonResponse({
+            'error': str(e)
+        }, status=500)
