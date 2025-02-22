@@ -140,14 +140,17 @@ p {
 
 .add-transaction { background-color: #4CAF50; }
 .manage-transactions { background-color: #FF9800; }
-.perform-analysis { background-color: #2196F3; }
-.generate-report { background-color: #9C27B0; }
+.generate-report { background-color: #2196F3; }
+.description { 
+    background-color: #9C27B0;
+    cursor: pointer;
+}
 
 /* Hover effects */
 .add-transaction:hover { background-color: #45a049; }
 .manage-transactions:hover { background-color: #FFA500; }
-.perform-analysis:hover { background-color: #1976D2; }
-.generate-report:hover { background-color: #7B1FA2; }
+.generate-report:hover { background-color: #1976D2; }
+.description:hover { background-color: #7B1FA2; }
 
 /* Charts Container Styles */
 .charts-container {
